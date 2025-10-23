@@ -1,5 +1,7 @@
 package com.zenonewrong.ui.screen.about
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -37,14 +39,17 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zenonewrong.R
 import com.zenonewrong.Screen
@@ -53,12 +58,16 @@ import com.zenonewrong.ui.screen.profile.SettingItem
 import com.zenonewrong.ui.theme.LineGrey
 import com.zenonewrong.ui.theme.TextGrey
 import com.zenonewrong.viewmodel.AppViewModel
+import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 
 @Composable
 fun AboutScreen() {
     val appViewModel: AppViewModel =
         viewModel(viewModelStoreOwner = LocalActivity.current as ComponentActivity)
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             Topbar(appViewModel,"关于软件")
@@ -98,7 +107,18 @@ fun AboutScreen() {
                     (containerColor = MaterialTheme.colorScheme.surface)
 
             ) {
-                AboutItem(title = "开源地址", onClick = {}, showHorizontalDivider = false)
+                AboutItem(title = "开源地址", onClick = {
+                    scope.launch {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW,
+                                "https://github.com/byone421/item".toUri())
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                }, showHorizontalDivider = false)
             }
             Spacer(modifier = Modifier.weight(1.0f))
             Box(modifier = Modifier.fillMaxWidth().padding(8.dp),
