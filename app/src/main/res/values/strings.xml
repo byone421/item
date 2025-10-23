@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">物品记</string>
+    <string name="home">首页</string>
+    <string name="profile">我的</string>
+    <string name="about">关于</string>
+    <string name="add">记录物品</string>
+    <string name="classify">分类</string>
+    <string name="search">搜索</string>
+    <string name="search_tip">请输入物品名称搜索</string>
+    <string name="back">返回</string>
+    <string name="name">名称</string>
+    <string name="clear">清除</string>
+    <string name="expiry_days_setting">过期天数设置</string>
+    <string name="data_store">导出</string>
+    <string name="data_import">导入数据</string>
+</resources>
