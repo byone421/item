@@ -30,7 +30,7 @@
 5. 运行应用
 
 ## 应用截图
-![1.jpg](img/1.jpg) ![2.jpg](img/2.jpg)
+![1.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213726678-95f97317-8a00-4e16-8fce-6c20f8a237ea.png?x-oss-process=image%2Fformat%2Cwebp) ![2.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213731518-d8afe9ba-e992-4a3d-8351-1f2e97a7a29f.png?x-oss-process=image%2Fformat%2Cwebp)
 ## 许可证
 
 本项目采用 MIT 许可证。
