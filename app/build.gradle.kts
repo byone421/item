@@ -25,6 +25,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -75,8 +76,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.material.icons.extended)
 
-    // Apache POI for Excel export
-    implementation(libs.poi)
-    implementation(libs.poi.ooxml)
+    implementation("com.opencsv:opencsv:5.9")
 
 }

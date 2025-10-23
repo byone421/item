@@ -19,29 +19,4 @@ data class ItemInfo(
     @ColumnInfo(name = "storage_location") val storageLocation: String,
     @ColumnInfo(name = "storage_quantity") val storageQuantity: String,
     @ColumnInfo(name = "remark") val remark: String
-) {
-
-    companion object {
-        /**
-         * 获取表的字段列表
-         * @return 包含所有字段名的List<String>
-         */
-        fun getTableColumns(): List<String> {
-            return listOf(
-                "ID",
-                "物品名称",
-                "生产日期",
-                "保质期",
-                "保质单位",
-                "到期日期",
-                "分类ID",
-                "分类名称",
-                "购买价格",
-                "购买日期",
-                "存储位置",
-                "存储数量",
-                "备注"
-            )
-        }
-    }
-}
+)

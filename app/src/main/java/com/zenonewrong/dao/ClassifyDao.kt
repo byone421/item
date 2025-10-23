@@ -32,7 +32,7 @@ interface ClassifyDao {
     suspend fun updateData(classify: Classify)
 
     @Query("SELECT * FROM classify ORDER BY sort,create_time DESC")
-    suspend fun getAllClassifiesExcel(): List<Classify>
+    suspend fun getAllClassifiesData(): List<Classify>
 
     @Query("DELETE FROM classify")
     suspend fun deleteAll()

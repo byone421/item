@@ -30,8 +30,7 @@
 5. 运行应用
 
 ## 应用截图
-![1.jpg](img/1.jpg)
-![2.jpg](img/2.jpg)
+![1.jpg](img/1.jpg) ![2.jpg](img/2.jpg)
 ## 许可证
 
 本项目采用 MIT 许可证。

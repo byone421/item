@@ -1,11 +1,10 @@
 package com.zenonewrong.viewmodel
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.zenonewrong.common.ExcelImporter
+import com.zenonewrong.common.DataImporter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +13,7 @@ import androidx.core.net.toUri
 
 class DataImportViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application.applicationContext
-    private val excelImporter = ExcelImporter(context)
+    private val dataImporter = DataImporter(context)
 
     private val _selectedFile = MutableStateFlow<String?>(null)
     val selectedFile: StateFlow<String?> = _selectedFile.asStateFlow()
@@ -27,6 +26,8 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _importResult = MutableStateFlow<String?>(null)
     val importResult: StateFlow<String?> = _importResult.asStateFlow()
+
+    private val _selectedFileType = MutableStateFlow<Int>(0)
 
     fun selectFile(fileUri: String) {
         _selectedFile.value = fileUri
@@ -41,17 +42,17 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
         _showWarningDialog.value = false
     }
 
-    fun importFromExcel() {
+    fun importFromCsv() {
         val file = _selectedFile.value
-        if (file == null) {
-            _importResult.value = "请先选择要导入的Excel文件"
+        if (file == null || !file.endsWith("csv")) {
+            _importResult.value = "请先选择要导入的CSV文件"
             return
         }
         _showWarningDialog.value = false
         viewModelScope.launch {
             try {
                 _isImporting.value = true
-                val result = excelImporter.importFromExcel(file)
+                val result = dataImporter.importFromExcel(file,_selectedFileType.value)
                 _importResult.value = result
                 Log.d("DataImportViewModel", "导入成功: $result")
             } catch (e: Exception) {
@@ -62,14 +63,6 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
                 _isImporting.value = false
             }
         }
-    }
-
-    fun clearImportResult() {
-        _importResult.value = null
-    }
-
-    fun clearSelectedFile() {
-        _selectedFile.value = null
     }
 
     fun getFileName(): String? {
@@ -84,5 +77,16 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
                 file.substringAfterLast("/")
             }
         }
+    }
+
+    fun setImportResult(string: String) {
+        _importResult.value=string
+    }
+
+    /**
+     * 0物品 1分类
+     */
+    fun setSelectedFileType(type: Int) {
+        _selectedFileType.value=type
     }
 }
