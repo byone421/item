@@ -76,6 +76,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.material.icons.extended)
 
-    implementation("com.opencsv:opencsv:5.9")
+    implementation(libs.opencsv)
 
 }

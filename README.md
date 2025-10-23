@@ -18,16 +18,18 @@
 
 ## 项目环境
 
-- Android Studio 2024.1
+- Android Studio 2024.3.2
 - JDK 11 或更高版本
+- Gradle-8.11.1
 
 ## 快速开始
 
 1. 克隆项目到本地
 2. 使用 Android Studio 打开项目
-3. 等待 Gradle 同步完成
-4. 连接设备或启动模拟器
-5. 运行应用
+3. 修改gradle-wrapper.properties中的gradle路径
+4. 等待 Gradle 同步完成
+5. 连接设备或启动模拟器
+6. 运行应用
 
 ## 应用截图
 ![1.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213726678-95f97317-8a00-4e16-8fce-6c20f8a237ea.png?x-oss-process=image%2Fformat%2Cwebp) ![2.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213731518-d8afe9ba-e992-4a3d-8351-1f2e97a7a29f.png?x-oss-process=image%2Fformat%2Cwebp)

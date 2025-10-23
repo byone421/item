@@ -67,6 +67,7 @@ data class ItemFormState(
                 purchaseDate = entity.purchaseDate,
                 storageLocation = entity.storageLocation,
                 storageQuantity = entity.storageQuantity,
+                purchasePrice = entity.purchasePrice,
                 remark = entity.remark
             )
         }
