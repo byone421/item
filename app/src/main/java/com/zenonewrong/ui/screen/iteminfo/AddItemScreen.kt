@@ -274,7 +274,7 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                         trailingContent = {
                             if (formState.storageLocation.isNotEmpty()) {
                                 IconButton(onClick = {
-                                    itemInfoVM.updatePurchaseDate("")
+                                    itemInfoVM.updateStorageLocation("")
                                 }, modifier = Modifier.size(40.dp)) {
                                     Icon(
                                         imageVector = Icons.Filled.Close,

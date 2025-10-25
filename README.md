@@ -32,7 +32,7 @@
 6. 运行应用
 
 ## 应用截图
-![1.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213726678-95f97317-8a00-4e16-8fce-6c20f8a237ea.png?x-oss-process=image%2Fformat%2Cwebp) ![2.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761213731518-d8afe9ba-e992-4a3d-8351-1f2e97a7a29f.png?x-oss-process=image%2Fformat%2Cwebp)
+![1.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761379915132-f505fcd7-d6fd-41d9-b89f-da75b428ce9b.png?x-oss-process=image%2Fformat%2Cwebp) ![2.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761379930940-95114629-5420-4e0c-ba5a-52940a9f9c6d.png?x-oss-process=image%2Fformat%2Cwebp)
 ## 许可证
 
 本项目采用 MIT 许可证。

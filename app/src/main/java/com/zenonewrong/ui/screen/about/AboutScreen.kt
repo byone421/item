@@ -123,7 +123,7 @@ fun AboutScreen() {
             Spacer(modifier = Modifier.weight(1.0f))
             Box(modifier = Modifier.fillMaxWidth().padding(8.dp),
                 contentAlignment = Alignment.Center){
-                Text(text = "当前版本：V1.0.0",
+                Text(text = "当前版本：V1.0.1",
                     fontFamily = FontFamily.Default,
                     fontSize = 16.sp,
                     lineHeight = 16.sp,
