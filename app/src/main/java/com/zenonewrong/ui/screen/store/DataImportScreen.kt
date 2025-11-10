@@ -1,5 +1,7 @@
 package com.zenonewrong.ui.screen.store
 
+import android.content.Context
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -40,12 +42,13 @@ fun DataImportScreen() {
     val showWarningDialog by dataImportViewModel.showWarningDialog.collectAsState()
     val importResult by dataImportViewModel.importResult.collectAsState()
 
-    // 文件选择器
+
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            dataImportViewModel.selectFile(it.toString())
+            dataImportViewModel.selectFileUri(it)
+            dataImportViewModel.showImportWarning()
         }
     }
 
@@ -70,63 +73,76 @@ fun DataImportScreen() {
             )
             Button(
                 onClick = {
+                    dataImportViewModel.setSelectedFileType(1)
                     filePickerLauncher.launch("*/*")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "请选择csv文件", style = MaterialTheme.typography.labelMedium,
+                    text = if (isImporting) "正在导入..." else "请选择物品CSV文件",
+                    style = MaterialTheme.typography.labelMedium,
                     color = Color.White
                 )
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            selectedFile?.let {
-                val fileName = dataImportViewModel.getFileName() ?: it
+            Button(
+                onClick = {
+                    dataImportViewModel.setSelectedFileType(1)
+                    filePickerLauncher.launch("*/*")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
-                    text = "已选择: $fileName",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                     text = if (isImporting) "正在导入..." else "请选择分类CSV文件",
+                     style = MaterialTheme.typography.labelMedium,
+                     color = Color.White
                 )
-                Button(
-                    onClick = {
-                        if (selectedFile!!.endsWith("csv")) {
-                            dataImportViewModel.showImportWarning()
-                            dataImportViewModel.setSelectedFileType(0)
-                        }else{
-                            dataImportViewModel.setImportResult("请选择csv文件")
-                        }
-                    },
-                    enabled = !isImporting,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        if (isImporting) "正在导入物品..." else "开始导入物品",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        if (selectedFile!!.endsWith("csv")) {
-                            dataImportViewModel.showImportWarning()
-                            dataImportViewModel.setSelectedFileType(1)
-                        }else{
-                            dataImportViewModel.setImportResult("请选择csv文件")
-                        }
-                    },
-                    enabled = !isImporting,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        if (isImporting) "正在导入分类..." else "开始导入分类",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White
-                    )
-                }
             }
+//            selectedFile?.let {
+//                val fileName = dataImportViewModel.getFileName() ?: it
+//                Text(
+//                    text = "已选择: $fileName",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    modifier = Modifier.padding(bottom = 16.dp)
+//                )
+//                Button(
+//                    onClick = {
+//                        if (selectedFile!!.endsWith("csv")) {
+//                            dataImportViewModel.showImportWarning()
+//                            dataImportViewModel.setSelectedFileType(0)
+//                        }else{
+//                            dataImportViewModel.setImportResult("请选择csv文件")
+//                        }
+//                    },
+//                    enabled = !isImporting,
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Text(
+//                        if (isImporting) "正在导入物品..." else "开始导入物品",
+//                        style = MaterialTheme.typography.labelMedium,
+//                        color = Color.White
+//                    )
+//                }
+//                Spacer(modifier = Modifier.height(16.dp))
+//                Button(
+//                    onClick = {
+//                        if (selectedFile!!.endsWith("csv")) {
+//                            dataImportViewModel.showImportWarning()
+//                            dataImportViewModel.setSelectedFileType(1)
+//                        }else{
+//                            dataImportViewModel.setImportResult("请选择csv文件")
+//                        }
+//                    },
+//                    enabled = !isImporting,
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Text(
+//                        if (isImporting) "正在导入分类..." else "开始导入分类",
+//                        style = MaterialTheme.typography.labelMedium,
+//                        color = Color.White
+//                    )
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -163,7 +179,7 @@ fun DataImportScreen() {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        dataImportViewModel.importFromCsv()
+                        dataImportViewModel.importCsvDataFormUri()
                     }
                 ) {
                     Text("确认导入", style = MaterialTheme.typography.labelSmall)

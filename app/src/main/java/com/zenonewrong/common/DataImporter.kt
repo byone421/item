@@ -13,12 +13,14 @@ import com.opencsv.CSVReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileReader
+import java.io.StringReader
 
 class DataImporter(private val context: Context) {
 
-    fun importCsvToClassify(filePath: String): List<Classify> {
-        val reader = CSVReader(FileReader(filePath))
-        val allLines = reader.readAll()
+    fun importCsvToClassify(csvText: String): List<Classify> {
+        val reader = StringReader(csvText)
+        val csvReader = CSVReader(reader)
+        val allLines = csvReader.readAll()
         reader.close()
 
         // 跳过表头
@@ -36,11 +38,11 @@ class DataImporter(private val context: Context) {
         }
     }
 
-    fun importCsvToItemInfo(filePath: String): List<ItemInfo> {
-        val reader = CSVReader(FileReader(filePath))
-        val allLines = reader.readAll()
+    fun importCsvToItemInfo(csvText: String): List<ItemInfo> {
+        val reader = StringReader(csvText)
+        val csvReader = CSVReader(reader)
+        val allLines = csvReader.readAll()
         reader.close()
-
         // 跳过第一行（表头）
         return allLines.drop(1).map { row ->
             ItemInfo(
@@ -92,6 +94,50 @@ class DataImporter(private val context: Context) {
     }
 
 
+    suspend fun importFromCsvContent(content: String,selectedFileType: Int): String = withContext(Dispatchers.IO) {
+        try {
+
+            val database = AppDatabase.getDatabase(context)
+            var importedItems = 0
+            //导入物品
+            if(selectedFileType==0){
+                val itemInfoList = importCsvToItemInfo(content)
+                database.itemInfoDao().deleteAll()
+                itemInfoList.forEach { item ->
+                    database.itemInfoDao().insertData(item)
+                    importedItems++
+                }
+            } //导入分类
+            else{
+                val classifyList = importCsvToClassify(content)
+                database.classifyDao().deleteAll()
+                classifyList.forEach { item ->
+                    database.classifyDao().insertData(item)
+                    importedItems++
+                }
+            }
+
+            //导入分类
+            "导入成功！已导入 $importedItems 条数据"
+        } catch (e: Exception) {
+            throw Exception("导入失败：${e.message}")
+        }
+    }
+
+
+
+
+    // 从URI读取文件内容
+    fun  readFileContentFromUri(uri: Uri): String? {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.bufferedReader().use { it.readText() }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
     fun resolveFilePath(context: Context, filePath: String): String {
         val uri = filePath.toUri()
         return when {

@@ -1,6 +1,8 @@
 package com.zenonewrong.viewmodel
 
 import android.app.Application
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +19,9 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _selectedFile = MutableStateFlow<String?>(null)
     val selectedFile: StateFlow<String?> = _selectedFile.asStateFlow()
+
+    private val _selectUri = MutableStateFlow<Uri?>(null)
+    val selectUri: StateFlow<Uri?> = _selectUri.asStateFlow()
 
     private val _isImporting = MutableStateFlow(false)
     val isImporting: StateFlow<Boolean> = _isImporting.asStateFlow()
@@ -42,17 +47,45 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
         _showWarningDialog.value = false
     }
 
-    fun importFromCsv() {
-        val file = _selectedFile.value
-        if (file == null || !file.endsWith("csv")) {
+//    fun importFromCsv() {
+//        val file = _selectedFile.value
+//        if (file == null || !file.endsWith("csv")) {
+//            _importResult.value = "请先选择要导入的CSV文件"
+//            return
+//        }
+//        _showWarningDialog.value = false
+//        viewModelScope.launch {
+//            try {
+//                _isImporting.value = true
+//                val result = dataImporter.importFromExcel(file,_selectedFileType.value)
+//                _importResult.value = result
+//                Log.d("DataImportViewModel", "导入成功: $result")
+//            } catch (e: Exception) {
+//                val errorMessage = "导入失败：${e.message}"
+//                _importResult.value = errorMessage
+//                Log.e("DataImportViewModel", "导入失败", e)
+//            } finally {
+//                _isImporting.value = false
+//            }
+//        }
+//    }
+
+
+    fun importCsvDataFormUri(){
+        val fileUri = _selectUri.value
+        if (fileUri == null) {
             _importResult.value = "请先选择要导入的CSV文件"
             return
         }
+        val fileContent = readFileContentFromUri(_selectUri.value!!)
         _showWarningDialog.value = false
+        var result = ""
         viewModelScope.launch {
             try {
                 _isImporting.value = true
-                val result = dataImporter.importFromExcel(file,_selectedFileType.value)
+                fileContent?.let { content ->
+                    result =  dataImporter.importFromCsvContent(content,_selectedFileType.value)
+                }
                 _importResult.value = result
                 Log.d("DataImportViewModel", "导入成功: $result")
             } catch (e: Exception) {
@@ -64,6 +97,8 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+
+
 
     fun getFileName(): String? {
         val file = _selectedFile.value ?: return null
@@ -88,5 +123,18 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
      */
     fun setSelectedFileType(type: Int) {
         _selectedFileType.value=type
+    }
+    // 从URI读取文件内容
+      fun  readFileContentFromUri(uri: Uri): String? {
+          return  dataImporter.readFileContentFromUri(uri)
+    }
+
+    fun importFromCsvContent(content: String) {
+
+
+    }
+
+    fun selectFileUri(uri: Uri) {
+        _selectUri.value = uri
     }
 }
