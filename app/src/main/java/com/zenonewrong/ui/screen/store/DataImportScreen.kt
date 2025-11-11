@@ -37,7 +37,6 @@ fun DataImportScreen() {
     val appViewModel: AppViewModel = viewModel(viewModelStoreOwner = activity)
     val dataImportViewModel: DataImportViewModel = viewModel(viewModelStoreOwner = activity)
 
-    val selectedFile by dataImportViewModel.selectedFile.collectAsState()
     val isImporting by dataImportViewModel.isImporting.collectAsState()
     val showWarningDialog by dataImportViewModel.showWarningDialog.collectAsState()
     val importResult by dataImportViewModel.importResult.collectAsState()
@@ -73,7 +72,7 @@ fun DataImportScreen() {
             )
             Button(
                 onClick = {
-                    dataImportViewModel.setSelectedFileType(1)
+                    dataImportViewModel.setSelectedFileType(0)
                     filePickerLauncher.launch("*/*")
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -98,51 +97,6 @@ fun DataImportScreen() {
                      color = Color.White
                 )
             }
-//            selectedFile?.let {
-//                val fileName = dataImportViewModel.getFileName() ?: it
-//                Text(
-//                    text = "已选择: $fileName",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    modifier = Modifier.padding(bottom = 16.dp)
-//                )
-//                Button(
-//                    onClick = {
-//                        if (selectedFile!!.endsWith("csv")) {
-//                            dataImportViewModel.showImportWarning()
-//                            dataImportViewModel.setSelectedFileType(0)
-//                        }else{
-//                            dataImportViewModel.setImportResult("请选择csv文件")
-//                        }
-//                    },
-//                    enabled = !isImporting,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text(
-//                        if (isImporting) "正在导入物品..." else "开始导入物品",
-//                        style = MaterialTheme.typography.labelMedium,
-//                        color = Color.White
-//                    )
-//                }
-//                Spacer(modifier = Modifier.height(16.dp))
-//                Button(
-//                    onClick = {
-//                        if (selectedFile!!.endsWith("csv")) {
-//                            dataImportViewModel.showImportWarning()
-//                            dataImportViewModel.setSelectedFileType(1)
-//                        }else{
-//                            dataImportViewModel.setImportResult("请选择csv文件")
-//                        }
-//                    },
-//                    enabled = !isImporting,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text(
-//                        if (isImporting) "正在导入分类..." else "开始导入分类",
-//                        style = MaterialTheme.typography.labelMedium,
-//                        color = Color.White
-//                    )
-//                }
-//            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

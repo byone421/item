@@ -26,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,11 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.zenonewrong.R
 import com.zenonewrong.Screen
-import com.zenonewrong.ui.screen.classify.ClassifyScreenTopBar
 import com.zenonewrong.ui.screen.home.HomeScreen
-import com.zenonewrong.ui.screen.iteminfo.AddItemScreenTopBar
 import com.zenonewrong.ui.screen.profile.ProfileScreen
 import com.zenonewrong.viewmodel.AppViewModel
 
