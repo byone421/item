@@ -3,15 +3,19 @@ package com.zenonewrong.viewmodel
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zenonewrong.common.DataImporter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import java.io.File
+import java.io.FileOutputStream
 
 class DataImportViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application.applicationContext
@@ -136,5 +140,64 @@ class DataImportViewModel(application: Application) : AndroidViewModel(applicati
 
     fun selectFileUri(uri: Uri) {
         _selectUri.value = uri
+    }
+
+    fun restoreImagesFromFolder(folderUri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                _isImporting.value = true
+                val count = copyImagesFromFolder(folderUri)
+                _importResult.value = "恢复图片成功：$count 张"
+            } catch (e: Exception) {
+                _importResult.value = "恢复图片失败：${e.message}"
+                Log.e("DataImportViewModel", "恢复图片失败", e)
+            } finally {
+                _isImporting.value = false
+            }
+        }
+    }
+
+    private fun copyImagesFromFolder(folderUri: Uri): Int {
+        val resolver = context.contentResolver
+        val treeDocumentId = DocumentsContract.getTreeDocumentId(folderUri)
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(folderUri, treeDocumentId)
+        val imageDir = File(context.filesDir, "item/images")
+        if (!imageDir.exists()) imageDir.mkdirs()
+
+        var count = 0
+        resolver.query(
+            childrenUri,
+            arrayOf(
+                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                DocumentsContract.Document.COLUMN_MIME_TYPE
+            ),
+            null,
+            null,
+            null
+        )?.use { cursor ->
+            val idIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+            val nameIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+            val mimeIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val mimeType = cursor.getString(mimeIndex)
+                if (mimeType == DocumentsContract.Document.MIME_TYPE_DIR) continue
+
+                val documentId = cursor.getString(idIndex)
+                val displayName = cursor.getString(nameIndex) ?: continue
+                val fileUri = DocumentsContract.buildDocumentUriUsingTree(folderUri, documentId)
+                val target = File(imageDir, displayName)
+
+                resolver.openInputStream(fileUri)?.use { input ->
+                    FileOutputStream(target).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                count++
+            }
+        }
+
+        return count
     }
 }

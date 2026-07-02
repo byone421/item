@@ -15,11 +15,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class DataExporter(private val context: Context) {
 
-    val TAG: String ="DataExporter"
-    
+    val TAG: String = "DataExporter"
+
     /**
      * 尝试创建目录，带异常处理
      */
@@ -29,13 +28,11 @@ class DataExporter(private val context: Context) {
                 val created = dir.mkdirs()
                 Log.d(TAG, "尝试创建目录: ${dir.absolutePath}, 结果: $created")
                 if (!created) {
-                    // 检查是否是因为父目录不存在
                     val parent = dir.parentFile
                     if (parent != null && !parent.exists()) {
                         Log.w(TAG, "父目录不存在: ${parent.absolutePath}")
                         return false
                     }
-                    // 检查权限
                     if (!dir.canWrite()) {
                         Log.w(TAG, "没有写入权限: ${dir.absolutePath}")
                         return false
@@ -59,7 +56,7 @@ class DataExporter(private val context: Context) {
         val header = arrayOf(
             "ID", "名称", "生产日期", "保质期", "保质单位",
             "到期日期", "分类ID", "分类名称", "价格", "购买日期",
-            "存放位置", "存放数量", "备注"
+            "存放位置", "存放数量", "备注", "图片"
         )
 
         val data = this.map { item ->
@@ -76,7 +73,8 @@ class DataExporter(private val context: Context) {
                 item.purchaseDate,
                 item.storageLocation,
                 item.storageQuantity,
-                item.remark
+                item.remark,
+                item.imagePaths
             )
         }
 
@@ -96,27 +94,62 @@ class DataExporter(private val context: Context) {
         }
         return listOf(header) + data
     }
+
+    private fun exportItemImages(items: List<ItemInfo>, imageDir: File) {
+        if (!tryCreateDirectory(imageDir)) {
+            throw Exception("无法创建图片导出目录")
+        }
+
+        val usedNames = mutableSetOf<String>()
+        items.forEach { item ->
+            item.imagePaths
+                .split(";")
+                .filter { it.isNotBlank() }
+                .forEach { path ->
+                    val source = File(path)
+                    if (source.exists() && source.isFile) {
+                        val target = nextImageTarget(imageDir, source.name.ifBlank { "item_${item.id}.jpg" }, usedNames)
+                        source.copyTo(target, overwrite = true)
+                    }
+                }
+        }
+    }
+
+    private fun nextImageTarget(dir: File, fileName: String, usedNames: MutableSet<String>): File {
+        val dotIndex = fileName.lastIndexOf('.')
+        val baseName = if (dotIndex > 0) fileName.substring(0, dotIndex) else fileName
+        val extension = if (dotIndex > 0) fileName.substring(dotIndex) else ""
+        var candidate = fileName
+        var index = 1
+
+        while (!usedNames.add(candidate) || File(dir, candidate).exists()) {
+            candidate = "${baseName}_${index++}$extension"
+        }
+
+        return File(dir, candidate)
+    }
+
     suspend fun exportToCsv(selectedFileType: Int): String = withContext(Dispatchers.IO) {
         try {
             val database = AppDatabase.getDatabase(context)
             var baseDir: String? = null
             var itemDir: File? = null
 
-            // 尝试使用外部存储的Download目录（用户可访问）
-            val downloadDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "csv")
+            val downloadDir = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "csv"
+            )
             if (tryCreateDirectory(downloadDir)) {
                 baseDir = downloadDir.absolutePath
                 itemDir = downloadDir
-                Log.d(TAG, "使用Download目录: $baseDir")
+                Log.d(TAG, "使用 Download 目录: $baseDir")
             } else {
-                // 退回到应用专属目录
                 val appExternalDir = context.getExternalFilesDir("excel")
                 if (appExternalDir != null && tryCreateDirectory(appExternalDir)) {
                     baseDir = appExternalDir.absolutePath
                     itemDir = appExternalDir
                     Log.d(TAG, "使用应用专属目录: $baseDir")
                 } else {
-                    // 最后退回到内部存储
                     val internalDir = File(context.filesDir, "excel")
                     if (tryCreateDirectory(internalDir)) {
                         baseDir = internalDir.absolutePath
@@ -127,28 +160,29 @@ class DataExporter(private val context: Context) {
                     }
                 }
             }
-            var  file: File
-            if(selectedFileType == 0){
+
+            val file: File
+            if (selectedFileType == 0) {
                 val itemInfoList = database.itemInfoDao().getAllItems()
-                val fileName = "导出物品_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())}.csv"
+                val exportName = "导出物品_${
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                }"
+                val fileName = "$exportName.csv"
                 file = File(itemDir, fileName)
-                try {
-                    val writer = CSVWriter(FileWriter(file))
+                CSVWriter(FileWriter(file)).use { writer ->
                     writer.writeAll(itemInfoList.itemInfoToCsvLines())
-                    writer.close()
-                    // 提示用户文件已保存
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }else{
+                exportItemImages(itemInfoList, File(itemDir, exportName))
+            } else {
                 val classifyList = database.classifyDao().getAllClassifiesData()
-                val fileName = "导出分类_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())}.csv"
+                val fileName = "导出分类_${
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                }.csv"
                 file = File(itemDir, fileName)
                 try {
                     val writer = CSVWriter(FileWriter(file))
                     writer.writeAll(classifyList.classifyToCsvLines())
                     writer.close()
-                    // 提示用户文件已保存
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -159,5 +193,4 @@ class DataExporter(private val context: Context) {
             throw e
         }
     }
-
 }

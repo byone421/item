@@ -1,8 +1,8 @@
 package com.zenonewrong.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zenonewrong.AppDatabase
@@ -10,7 +10,6 @@ import com.zenonewrong.bean.ItemFormState
 import com.zenonewrong.bean.ItemFormState.DateFieldType
 import com.zenonewrong.entity.Classify
 import com.zenonewrong.entity.ItemInfo
-import com.zenonewrong.viewmodel.ClassifyViewModel.MessageEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
+import java.io.File
+import java.io.FileOutputStream
 
 class ItemInfoViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
@@ -31,11 +31,11 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
     private val _messageEvent = MutableSharedFlow<MessageEvent>()
     val messageEvent = _messageEvent.asSharedFlow()
 
-
     sealed class MessageEvent {
         data class ShowSnackbar(val message: String) : MessageEvent()
         data class Success(val message: String) : MessageEvent()
     }
+
     fun updateName(name: String) {
         _itemFormState.update { it.copy(name = name) }
     }
@@ -59,6 +59,7 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         }
         Log.d("ItemInfoViewModel", "Updated formState classifyName: ${_itemFormState.value.classifyName}")
     }
+
     fun updateStorageDuration(duration: String) {
         _itemFormState.update {
             it.copy(storageDuration = duration).calculateMaturityDate()
@@ -79,11 +80,11 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
             )
         }
     }
+
     fun updatePurchasePrice(price: String) {
         _itemFormState.update {
             it.copy(
                 purchasePrice = price,
-
             )
         }
     }
@@ -100,12 +101,41 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         _itemFormState.update { it.copy(remark = remark) }
     }
 
-    // 打开日期选择器
+    fun addImage(uri: Uri) {
+        if (_itemFormState.value.imagePaths.size >= 5) {
+            viewModelScope.launch {
+                _messageEvent.emit(MessageEvent.ShowSnackbar("最多只能添加5张图片"))
+            }
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val savedPath = copyImageToAppStorage(uri)
+                _itemFormState.update { state ->
+                    state.copy(imagePaths = (state.imagePaths + savedPath).take(5))
+                }
+            } catch (e: Exception) {
+                _messageEvent.emit(MessageEvent.ShowSnackbar("图片保存失败: ${e.message}"))
+            }
+        }
+    }
+
+    fun addImages(uris: List<Uri>) {
+        uris.take(5 - _itemFormState.value.imagePaths.size).forEach { addImage(it) }
+    }
+
+    fun removeImage(path: String) {
+        _itemFormState.update { state ->
+            state.copy(imagePaths = state.imagePaths.filterNot { it == path })
+        }
+        runCatching { File(path).delete() }
+    }
+
     fun showDatePicker(field: ItemFormState.DateFieldType) {
         _itemFormState.update { it.copy(showDatePicker = true, currentDateField = field) }
     }
 
-    // 关闭日期选择器
     fun dismissDatePicker() {
         _itemFormState.update { it.copy(showDatePicker = false) }
     }
@@ -113,10 +143,8 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
     fun onDateSelected(dateString: String) {
         val currentField = _itemFormState.value.currentDateField
         _itemFormState.update { currentState ->
-            when(currentField) {
-                DateFieldType.PRODUCED_DATE -> {
-                    currentState.copy(producedDate = dateString)
-                }
+            when (currentField) {
+                DateFieldType.PRODUCED_DATE -> currentState.copy(producedDate = dateString)
                 DateFieldType.MATURITY_DATE -> currentState.copy(maturityDate = dateString)
                 DateFieldType.PURCHASE_DATE -> currentState.copy(purchaseDate = dateString)
                 null -> currentState
@@ -125,13 +153,10 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         dismissDatePicker()
     }
 
-
-    // 打开日期选择器
     fun showStorageUnit() {
         _itemFormState.update { it.copy(showStorageUnit = true) }
     }
 
-    // 关闭日期选择器
     fun dismissStorageUnit() {
         _itemFormState.update { it.copy(showStorageUnit = false) }
     }
@@ -140,12 +165,10 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         _itemFormState.update { it.copy(showStorageUnit = false, storageUnit = unit).calculateMaturityDate() }
     }
 
-    // 加载现有项目
     fun loadItem(item: ItemInfo) {
         _itemFormState.update { ItemFormState.fromEntity(item) }
     }
 
-    // 根据ID加载项目
     fun loadItemById(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -159,7 +182,6 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // 保存项目
     fun saveItem() {
         val validatedState = _itemFormState.value.validate()
         _itemFormState.update { validatedState }
@@ -183,18 +205,29 @@ class ItemInfoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // 清空表单
     fun clearForm() {
         _itemFormState.update { ItemFormState() }
     }
 
-    // 复制时清空id
     fun clearIdForCopy() {
         _itemFormState.update { it.copy(id = 0L) }
     }
 
-    // 扩展函数检查表单有效性
+    private fun copyImageToAppStorage(uri: Uri): String {
+        val dir = File(getApplication<Application>().filesDir, "item/images")
+        if (!dir.exists()) dir.mkdirs()
+        val file = File(dir, "${System.currentTimeMillis()}_${uri.lastPathSegment?.hashCode() ?: 0}.jpg")
+
+        getApplication<Application>().contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        } ?: throw IllegalArgumentException("无法读取图片")
+
+        return file.absolutePath
+    }
+
     private fun ItemFormState.isFormValid(): Boolean {
-        return isNameValid  &&  isMaturityDateValid
+        return isNameValid && isMaturityDateValid
     }
 }

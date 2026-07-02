@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.zenonewrong.entity.ItemInfo
+import java.io.File
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
@@ -101,6 +102,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteItem(itemId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                itemInfoDao.findById(itemId)?.deleteImages()
                 itemInfoDao.deleteById(itemId)
                 refreshStatusCards()
             } catch (e: Exception) {}
@@ -125,5 +127,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             deleteItem(item.id)
         }
         hideDeleteConfirmDialog()
+    }
+
+    private fun ItemInfo.deleteImages() {
+        imagePaths
+            .split(";")
+            .filter { it.isNotBlank() }
+            .forEach { path -> runCatching { File(path).delete() } }
     }
 }

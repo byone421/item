@@ -18,5 +18,6 @@ data class ItemInfo(
     @ColumnInfo(name = "purchase_date") val purchaseDate: String,
     @ColumnInfo(name = "storage_location") val storageLocation: String,
     @ColumnInfo(name = "storage_quantity") val storageQuantity: String,
-    @ColumnInfo(name = "remark") val remark: String
+    @ColumnInfo(name = "remark") val remark: String,
+    @ColumnInfo(name = "image_paths") val imagePaths: String = ""
 )

@@ -28,6 +28,9 @@ interface ItemInfoDao {
     @Query("DELETE FROM item_info WHERE maturity_date < date('now')")
     suspend fun deleteAllExpiredItems()
 
+    @Query("SELECT * FROM item_info WHERE maturity_date < date('now')")
+    suspend fun getExpiredItems(): List<ItemInfo>
+
     @Query("SELECT i.*, c.name as classify_name FROM item_info i LEFT JOIN classify c ON i.classify_id = c.id WHERE i.name LIKE :query ORDER BY i.id DESC")
     fun searchItemsByName(query: String): Flow<List<ItemInfo>>
 

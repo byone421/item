@@ -51,6 +51,14 @@ fun DataImportScreen() {
         }
     }
 
+    val imageFolderPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        uri?.let {
+            dataImportViewModel.restoreImagesFromFolder(it)
+        }
+    }
+
     Scaffold(
         topBar = {
             Topbar(appViewModel, "导入")
@@ -95,6 +103,20 @@ fun DataImportScreen() {
                      text = if (isImporting) "正在导入..." else "请选择分类CSV文件",
                      style = MaterialTheme.typography.labelMedium,
                      color = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    imageFolderPickerLauncher.launch(null)
+                },
+                enabled = !isImporting,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = if (isImporting) "正在恢复..." else "恢复图片",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White
                 )
             }
 

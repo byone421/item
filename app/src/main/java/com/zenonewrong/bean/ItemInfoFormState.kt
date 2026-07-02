@@ -20,6 +20,7 @@ data class ItemFormState(
     val storageLocation: String = "",
     val storageQuantity: String = "",
     val remark: String = "",
+    val imagePaths: List<String> = emptyList(),
 
     // 验证状态
     val isNameValid: Boolean = true,
@@ -48,7 +49,8 @@ data class ItemFormState(
             storageLocation = storageLocation,
             storageQuantity = storageQuantity,
             purchasePrice = purchasePrice,
-            remark = remark
+            remark = remark,
+            imagePaths = imagePaths.joinToString(";")
         )
     }
 
@@ -68,7 +70,11 @@ data class ItemFormState(
                 storageLocation = entity.storageLocation,
                 storageQuantity = entity.storageQuantity,
                 purchasePrice = entity.purchasePrice,
-                remark = entity.remark
+                remark = entity.remark,
+                imagePaths = entity.imagePaths
+                    .split(";")
+                    .filter { it.isNotBlank() }
+                    .take(5)
             )
         }
     }
@@ -95,17 +101,33 @@ data class ItemFormState(
         if (producedDate.isBlank() || storageDuration.isBlank() || storageUnit.isBlank()) return this
 
         return try {
-            var duration = 0
-            when(storageUnit){
-                "天"->{duration = storageDuration.toInt()}
-                "周"->{duration = (storageDuration.toInt())*7}
-                "月"->{duration = (storageDuration.toInt())*30}
-                "年"->{duration = (storageDuration.toInt())*365}
-            }
+//            var duration = 0
+//            when(storageUnit){
+//                "天"->{duration = storageDuration.toInt()}
+//                "周"->{duration = (storageDuration.toInt())*7}
+//                "月"->{duration = (storageDuration.toInt())*30}
+//                "年"->{duration = (storageDuration.toInt())*365}
+//            }
 
             val produced = LocalDate.parse(producedDate, DateTimeFormatter.ISO_DATE)
-            val maturity = produced.plusDays(duration.toLong()-1)
+            var maturity = produced
+            when(storageUnit){
+                "天"->{
+                    maturity =  produced.plusDays(storageDuration.toLong())
+                }
+                "周"->{
+                    maturity =  produced.plusWeeks(storageDuration.toLong())
+                }
+                "月"->{
+                    maturity =  produced.plusMonths(storageDuration.toLong())
+                }
+                "年"->{
+                    maturity =  produced.plusYears(storageDuration.toLong())
+                }
+            }
+//            produced.plusDays(duration.toLong()-1)
 
+            maturity = maturity.plusDays(-1)
             this.copy(
                 maturityDate = maturity.format(DateTimeFormatter.ISO_DATE),
                 isMaturityDateValid = true

@@ -4,11 +4,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -66,6 +74,7 @@ fun AppEntryPoint() {
             navController.popBackStack()
         }
     }
+    Box {
     NavHost(
         navController = navController,
         startDestination = "main"
@@ -87,6 +96,14 @@ fun AppEntryPoint() {
         composable(Screen.DateStore.route) { DataStoreScreen() }
         composable(Screen.DataImport.route) { DataImportScreen() }
         composable(Screen.About.route) { AboutScreen() }
+    }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .background(MaterialTheme.colorScheme.surface)
+        )
     }
 //    navController.navigate("main")
 //    MainScreen(navController)

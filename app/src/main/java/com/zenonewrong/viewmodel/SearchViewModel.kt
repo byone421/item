@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
@@ -211,6 +212,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     fun deleteItem(itemId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                itemInfoDao.findById(itemId)?.deleteImages()
                 itemInfoDao.deleteById(itemId)
                 // 删除后刷新状态卡片
                 loadStatusCards()
@@ -220,10 +222,18 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private fun ItemInfo.deleteImages() {
+        imagePaths
+            .split(";")
+            .filter { it.isNotBlank() }
+            .forEach { path -> runCatching { File(path).delete() } }
+    }
+
     // 删除所有过期物品
     fun deleteAllExpiredItems() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                itemInfoDao.getExpiredItems().forEach { it.deleteImages() }
                 itemInfoDao.deleteAllExpiredItems()
                 // 删除后刷新状态卡片
                 loadStatusCards()

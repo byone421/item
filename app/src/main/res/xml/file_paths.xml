@@ -4,4 +4,5 @@
     <external-files-path name="item_files" path="item" />
     <!-- 应用专属内部存储目录 -->
     <files-path name="internal_files" path="item" />
+    <cache-path name="camera_cache" path="camera" />
 </paths>

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zenonewrong.dao.ClassifyDao
 import com.zenonewrong.dao.ExpiryReminderDao
@@ -12,7 +13,7 @@ import com.zenonewrong.entity.Classify
 import com.zenonewrong.entity.ExpiryReminder
 import com.zenonewrong.entity.ItemInfo
 
-@Database(entities = [ItemInfo::class, Classify::class, ExpiryReminder::class], version = 2, exportSchema = true)
+@Database(entities = [ItemInfo::class, Classify::class, ExpiryReminder::class], version = 3, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun itemInfoDao(): ItemInfoDao
     abstract fun classifyDao(): ClassifyDao
@@ -21,6 +22,12 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE item_info ADD COLUMN image_paths TEXT NOT NULL DEFAULT ''")
+            }
+        }
 
         private val roomCallback = object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -40,6 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 ).addCallback(roomCallback)
+                    .addMigrations(MIGRATION_2_3)
                 .build()
                 INSTANCE = instance
                 instance

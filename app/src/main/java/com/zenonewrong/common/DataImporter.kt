@@ -58,7 +58,8 @@ class DataImporter(private val context: Context) {
                 purchaseDate = row[9],
                 storageLocation = row[10],
                 storageQuantity = row[11],
-                remark = row.getOrNull(12) ?: ""
+                remark = row.getOrNull(12) ?: "",
+                imagePaths = row.getOrNull(13) ?: ""
             )
         }
     }
