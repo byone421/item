@@ -10,5 +10,6 @@ data  class Classify (
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "sort") val sortOrder: Int,
     @ColumnInfo(name = "create_time") val createTime: Long,
-    @ColumnInfo(name = "show_on_home") val showOnHome: Boolean = true
+    @ColumnInfo(name = "show_on_home") val showOnHome: Boolean = true,
+    @ColumnInfo(name = "description") val description: String = ""
 )

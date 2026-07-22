@@ -21,6 +21,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val _backEvent = MutableSharedFlow<Unit>()
     val backEvent = _backEvent.asSharedFlow()
     var currentTab by mutableStateOf(Screen.Home.route)
+    var selectedHomeClassifyId by mutableStateOf<Long?>(null)
+        private set
+    var selectedHomeClassifyName by mutableStateOf<String?>(null)
+        private set
 
     private val _sourceScreen = MutableStateFlow<String?>(null)
     val sourceScreen: StateFlow<String?> = _sourceScreen
@@ -36,5 +40,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _backEvent.emit(Unit)
         }
+    }
+
+    fun showClassifyOnHome(id: Long, name: String) {
+        selectedHomeClassifyId = id
+        selectedHomeClassifyName = name
+        currentTab = Screen.Home.route
+    }
+
+    fun clearHomeClassify() {
+        selectedHomeClassifyId = null
+        selectedHomeClassifyName = null
     }
 }

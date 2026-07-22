@@ -82,14 +82,15 @@ class DataExporter(private val context: Context) {
     }
 
     fun List<Classify>.classifyToCsvLines(): List<Array<String>> {
-        val header = arrayOf("ID", "名称", "排序", "创建时间", "首页展示")
+        val header = arrayOf("ID", "名称", "排序", "创建时间", "首页展示", "说明")
         val data = this.map { item ->
             arrayOf(
                 item.id.toString(),
                 item.name,
                 item.sortOrder.toString(),
                 item.createTime.toString(),
-                item.showOnHome.toString()
+                item.showOnHome.toString(),
+                item.description
             )
         }
         return listOf(header) + data

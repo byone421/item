@@ -8,6 +8,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,6 +74,7 @@ import com.zenonewrong.R
 import com.zenonewrong.Screen
 import com.zenonewrong.bean.ItemFormState
 import com.zenonewrong.entity.Classify
+import com.zenonewrong.ui.theme.LineGrey
 import com.zenonewrong.ui.theme.TextGrey
 import com.zenonewrong.viewmodel.AppViewModel
 import com.zenonewrong.viewmodel.ItemInfoViewModel.MessageEvent
@@ -132,6 +134,7 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
         }
     }
     Scaffold(
+        containerColor = Color(0xFFF7F0F5),
         topBar = {
             AddItemScreenTopBar(appViewModel,itemInfoVM)
         }, snackbarHost = {
@@ -141,29 +144,30 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(Color(0xFFF7F0F5))
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(start = 18.dp, end = 18.dp, bottom = 24.dp)
         ) {
             Text(
                 text = "基本信息",
-                style = MaterialTheme.typography.labelSmall,
                 color = TextGrey,
-                fontSize = 17.sp
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(26.dp),
+                border = BorderStroke(1.dp, LineGrey),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 colors = CardDefaults.cardColors
-                    (containerColor = MaterialTheme.colorScheme.surface)
+                    (containerColor = Color(0xFFFFFAFD))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 8.dp, end = 4.dp)
                 ) {
                     InputField(
                         required = true,
@@ -240,6 +244,17 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                         onValueChange = {},
                         onClick = {
                             itemInfoVM.showDatePicker(ItemFormState.DateFieldType.MATURITY_DATE)
+                        },
+                        trailingContent = {
+                            Text(
+                                text = "自动计算",
+                                color = Color(0xFF8D6AA5),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                modifier = Modifier
+                                    .background(Color(0xFFEEE5F4), RoundedCornerShape(15.dp))
+                                    .padding(horizontal = 10.dp, vertical = 7.dp)
+                            )
                         }
                     )
                     InputField(
@@ -267,24 +282,25 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(21.dp))
             Text(
                 text = "其他信息",
-                style = MaterialTheme.typography.labelSmall,
                 color = TextGrey,
-                fontSize = 17.sp
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                shape = RoundedCornerShape(26.dp),
+                border = BorderStroke(1.dp, LineGrey),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 8.dp)
                 ) {
                     InputField(
                         label = "购买日期",
@@ -389,23 +405,25 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(21.dp))
             Text(
                 text = "图片",
-                style = MaterialTheme.typography.labelSmall,
                 color = TextGrey,
-                fontSize = 17.sp
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                shape = RoundedCornerShape(26.dp),
+                border = BorderStroke(1.dp, LineGrey),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp)
+                        .padding(14.dp)
                 ) {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(formState.imagePaths) { path ->
@@ -440,15 +458,19 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (formState.imagePaths.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             enabled = formState.imagePaths.size < 5,
+                            modifier = Modifier.weight(1f).height(48.dp),
                             onClick = {
                                 val uri = createCameraImageUri(context)
                                 cameraImageUri = uri
                                 cameraLauncher.launch(uri)
-                            }
+                            },
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Icon(Icons.Filled.CameraAlt, contentDescription = null)
                             Spacer(modifier = Modifier.size(8.dp))
@@ -460,19 +482,25 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                         }
                         Button(
                             enabled = formState.imagePaths.size < 5,
+                            modifier = Modifier.weight(1f).height(48.dp),
                             onClick = {
                                 imagePickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                 )
-                            }
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
 
                             Icon(Icons.Filled.AddPhotoAlternate, contentDescription = null)
                             Spacer(modifier = Modifier.size(8.dp))
                             Text(
-                                text = "添加图片",
+                                text = "图片",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -480,12 +508,12 @@ fun AddItemScreen(itemId: Long? = null, isCopy: Boolean = false) {
                         text = "${formState.imagePaths.size}/5",
                         style = MaterialTheme.typography.labelSmall,
                         color = TextGrey,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 12.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             // 添加按钮
             AddButton(
@@ -592,17 +620,18 @@ fun AddButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.height(50.dp),
+        modifier = modifier.height(58.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.surface
         ),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(32.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Text(
             text = "保存",
-            style = MaterialTheme.typography.labelMedium,
-            color = Color.White
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.ExtraBold
         )
     }
 }

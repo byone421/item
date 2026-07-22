@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 class ClassifyViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
     private val classifyDao = database.classifyDao()
+    private val itemInfoDao = database.itemInfoDao()
 
     // 初始化输入状态
     private val _classifyState = MutableStateFlow(ClassifyState())
@@ -37,6 +38,9 @@ class ClassifyViewModel(application: Application) : AndroidViewModel(application
 
     val allClassifies =
         classifyDao.getAllClassifies().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val allItems =
+        itemInfoDao.getAllItemInfos().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // 消息事件类型
     sealed class MessageEvent {
@@ -59,6 +63,7 @@ class ClassifyViewModel(application: Application) : AndroidViewModel(application
                 id = null,
                 name = "",
                 sortOrder = "0",
+                description = "",
                 showOnHome = false,
                 editingClassify = false
             )
@@ -76,6 +81,10 @@ class ClassifyViewModel(application: Application) : AndroidViewModel(application
         if (sortOrder.all { it.isDigit() }) {
             _classifyState.update { it.copy(sortOrder = sortOrder) }
         }
+    }
+
+    fun updateDescription(description: String) {
+        _classifyState.update { it.copy(description = description) }
     }
 
     fun updateShowOnHome(showOnHome: Boolean) {
@@ -102,7 +111,8 @@ class ClassifyViewModel(application: Application) : AndroidViewModel(application
                     name = _classifyState.value.name,
                     sortOrder = sortOrder,
                     createTime = System.currentTimeMillis(),
-                    showOnHome = _classifyState.value.showOnHome
+                    showOnHome = _classifyState.value.showOnHome,
+                    description = _classifyState.value.description
                 )
                 classifyDao.insertData(classify)
                 _messageEvent.emit(MessageEvent.ShowSnackbar("操作成功"))
@@ -123,6 +133,7 @@ class ClassifyViewModel(application: Application) : AndroidViewModel(application
                 id = classify.id,
                 name = classify.name,
                 sortOrder = classify.sortOrder.toString(),
+                description = classify.description,
                 showOnHome = classify.showOnHome,
                 editingClassify = true
             )

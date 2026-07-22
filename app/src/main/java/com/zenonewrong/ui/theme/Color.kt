@@ -7,19 +7,19 @@ import androidx.compose.ui.graphics.Color
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
-val Purple40 = Color(0xFF6960E6)
-val PurpleGrey = Color(0xFF625b71)
+val Purple40 = Color(0xFF8D6AA5)
+val PurpleGrey = Color(0xFF786F7D)
 val Pink40 = Color(0xFF7D5260)
-val BGGrey = Color(0xFFF2F2F2)
-val ConGrey = Color(0xFFF0F0F0)
-val TextGrey = Color(0xFF6F6F6F)
-val LineGrey = Color(0xFFAFAFAF)
+val BGGrey = Color(0xFFF7F0F5)
+val ConGrey = Color(0xFFF0E8F0)
+val TextGrey = Color(0xFF786F7D)
+val LineGrey = Color(0xFFEADFEB)
 
 // 首页相关颜色
-val CardRed = Color(0xFFD43030)
-val CardYellow = Color(0xFFFFC300)
-val CardBlue = Color(0xFF2A82E4)
-val CardGreen = Color(0xFF40B870)
+val CardRed = Color(0xFFC85D67)
+val CardYellow = Color(0xFFD28A4A)
+val CardBlue = Color(0xFF6787C7)
+val CardGreen = Color(0xFF58A071)
 
 
 ////创建自定义 ColorScheme

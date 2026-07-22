@@ -116,7 +116,7 @@ fun SwipeableClassifyContainer(
     val swipeActions = createClassifySwipeActions(classify, onDelete, onEdit, onDetail)
 
     SwipeableActionsBox(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp),
+        modifier = Modifier.padding(horizontal = 18.dp, vertical = 5.dp),
         swipeThreshold = 50.dp,
         endActions = swipeActions,
     ) {

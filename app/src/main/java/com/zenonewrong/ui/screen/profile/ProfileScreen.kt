@@ -2,6 +2,7 @@ package com.zenonewrong.ui.screen.profile
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +15,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zenonewrong.Screen
+import com.zenonewrong.ui.theme.LineGrey
 import com.zenonewrong.ui.theme.TextGrey
 import com.zenonewrong.viewmodel.AppViewModel
 
@@ -32,22 +36,24 @@ fun ProfileScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color(0xFFF7F0F5))
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(horizontal = 18.dp, vertical = 20.dp)
     ) {
         Text(
             text = "设置",
-            style = MaterialTheme.typography.labelMedium,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.ExtraBold,
             color = TextGrey,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors
-                (containerColor = MaterialTheme.colorScheme.surface)
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, LineGrey),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD))
         ) {
             Column(
                 modifier = Modifier
@@ -56,24 +62,26 @@ fun ProfileScreen() {
                 SettingItem(title = "过期天数设置", onClick = {
                     appViewModel.navigateTo(Screen.Profile.route, Screen.ExpiryDaysSetting.route)
                 })
-                SettingItem(title = "分类管理", showHorizontalDivider = false, onClick = {
-                    appViewModel.navigateTo(Screen.Profile.route, Screen.Classify.route)
-                })
+//                SettingItem(title = "分类管理", showHorizontalDivider = false, onClick = {
+//                    appViewModel.navigateTo(Screen.Profile.route, Screen.Classify.route)
+//                })
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(22.dp))
         Text(
             text = "转存数据",
-            style = MaterialTheme.typography.labelMedium,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.ExtraBold,
             color = TextGrey,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors
-                (containerColor = MaterialTheme.colorScheme.surface)
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, LineGrey),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD))
         ) {
             Column(
                 modifier = Modifier
@@ -87,19 +95,21 @@ fun ProfileScreen() {
                 })
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(22.dp))
         Text(
             text = "其他",
-            style = MaterialTheme.typography.labelMedium,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.ExtraBold,
             color = TextGrey,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors
-                (containerColor = MaterialTheme.colorScheme.surface)
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, LineGrey),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD))
         ) {
             Column(
                 modifier = Modifier

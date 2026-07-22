@@ -25,8 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zenonewrong.ui.theme.LineGrey
 import com.zenonewrong.ui.theme.TextGrey
 
@@ -46,7 +48,11 @@ fun InputField(
     // 将点击区域放在最上层
     BasicTextField(
         value = text,
-        textStyle = MaterialTheme.typography.labelMedium,
+        textStyle = TextStyle(
+            color = Color(0xFF2D2930),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.ExtraBold
+        ),
         onValueChange = if (readOnly) { _ -> } else onValueChange,
         readOnly = readOnly,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -58,21 +64,24 @@ fun InputField(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxHeight()
             ) {
-                Row(modifier = Modifier.width(70.dp)) {
+                Row(modifier = Modifier.width(88.dp)) {
                     if (required) {
                         Text(
                             modifier = Modifier.width(5.dp),
                             text = "*",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.Red
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFFC85D67)
                         )
                     } else {
                         Spacer(modifier = Modifier.width(5.dp))
                     }
                     Text(
                         text = label,
-                        modifier = Modifier.width(100.dp),
-                        style = MaterialTheme.typography.labelMedium
+                        modifier = Modifier.width(83.dp),
+                        color = Color(0xFF786F7D),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold
                     )
                 }
                 Box(
@@ -85,7 +94,7 @@ fun InputField(
                     if (text.isEmpty()) {
                         Text(
                             text = "请输入${label}",
-                            style = MaterialTheme.typography.labelMedium, color = TextGrey
+                            fontSize = 16.sp, color = TextGrey
                         )
                     }
                     if (readOnly) {
@@ -108,16 +117,17 @@ fun InputField(
             }
         },
         modifier = Modifier
-            .background(Color.White)
-            .height(52.dp)
             .fillMaxWidth()
+            .height(70.dp)
+            .background(Color(0xFFFFFAFD))
+            .padding(horizontal = 14.dp)
     )
 
 
     if (showHorizontalDivider) {
         HorizontalDivider(
             color = LineGrey,
-            thickness = 0.dp,
+            thickness = .5.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(.5.dp)

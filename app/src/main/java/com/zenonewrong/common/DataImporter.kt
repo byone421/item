@@ -33,7 +33,8 @@ class DataImporter(private val context: Context) {
                 showOnHome = when {
                     row.size > 4 -> row[4].equals("true", ignoreCase = true)
                     else -> true
-                }
+                },
+                description = row.getOrNull(5) ?: ""
             )
         }
     }

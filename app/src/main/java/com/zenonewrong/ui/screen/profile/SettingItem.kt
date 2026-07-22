@@ -32,6 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zenonewrong.ui.theme.LineGrey
@@ -58,22 +60,27 @@ fun SettingItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Spacer(modifier= Modifier.widthIn(8.dp,8.dp))
-        Text(title, style = MaterialTheme.typography.labelMedium)
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF2D2930)
+        )
         Spacer(modifier = Modifier.weight(1f,))
         Icon(
             modifier = Modifier.size(22.dp), imageVector =
                 Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = TextGrey
         )
+        Spacer(modifier = Modifier.width(12.dp))
     }
     if(showHorizontalDivider){
         HorizontalDivider(
             color = LineGrey,
-            thickness = 0.dp,
+            thickness = .5.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp)
-                .height(.5.dp)
+                .padding(horizontal = 14.dp)
         )
     }
 

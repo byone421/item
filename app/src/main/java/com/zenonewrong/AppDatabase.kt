@@ -13,7 +13,7 @@ import com.zenonewrong.entity.Classify
 import com.zenonewrong.entity.ExpiryReminder
 import com.zenonewrong.entity.ItemInfo
 
-@Database(entities = [ItemInfo::class, Classify::class, ExpiryReminder::class], version = 3, exportSchema = true)
+@Database(entities = [ItemInfo::class, Classify::class, ExpiryReminder::class], version = 5, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun itemInfoDao(): ItemInfoDao
     abstract fun classifyDao(): ClassifyDao
@@ -26,6 +26,22 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE item_info ADD COLUMN image_paths TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                if (!db.hasColumn("classify", "show_on_home")) {
+                    db.execSQL("ALTER TABLE classify ADD COLUMN show_on_home INTEGER NOT NULL DEFAULT 1")
+                }
+            }
+        }
+
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                if (!db.hasColumn("classify", "description")) {
+                    db.execSQL("ALTER TABLE classify ADD COLUMN description TEXT NOT NULL DEFAULT ''")
+                }
             }
         }
 
@@ -47,11 +63,21 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 ).addCallback(roomCallback)
-                    .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
                 INSTANCE = instance
                 instance
             }
         }
     }
+}
+
+private fun SupportSQLiteDatabase.hasColumn(table: String, column: String): Boolean {
+    query("PRAGMA table_info($table)").use { cursor ->
+        val nameIndex = cursor.getColumnIndex("name")
+        while (cursor.moveToNext()) {
+            if (cursor.getString(nameIndex) == column) return true
+        }
+    }
+    return false
 }

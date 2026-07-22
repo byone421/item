@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,7 @@ sealed class Screen(
     object About : Screen("about", R.string.profile)
     object AddItem : Screen("add", R.string.add)
     object Main : Screen("main", R.string.home)
-    object Classify : Screen("classify", R.string.classify)
+    object Classify : Screen("classify", R.string.classify, Icons.Filled.Category)
     object ExpiryDaysSetting : Screen("expiry_days_setting", R.string.expiry_days_setting)
     object Search : Screen("search", R.string.search)
     object DateStore : Screen("data_store", R.string.data_store)
