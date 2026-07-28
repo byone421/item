@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zenonewrong.Screen
+import com.zenonewrong.ui.screen.components.Topbar
 import com.zenonewrong.ui.theme.LineGrey
 import com.zenonewrong.ui.theme.TextGrey
 import com.zenonewrong.viewmodel.AppViewModel
@@ -38,8 +39,9 @@ fun ProfileScreen() {
             .fillMaxSize()
             .background(Color(0xFFF7F0F5))
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 18.dp, vertical = 20.dp)
+            .padding(start = 18.dp, end = 18.dp, bottom = 20.dp)
     ) {
+        Topbar(appViewModel, "我的",showBack = false)
         Text(
             text = "设置",
             fontSize = 14.sp,

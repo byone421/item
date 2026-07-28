@@ -221,7 +221,7 @@ fun ClassifyScreen(showBack: Boolean = false) {
 private fun ClassifyItem(item: Classify, count: Int, onClick: (Classify) -> Unit) {
     Card(
         onClick = { onClick(item) },
-        modifier = Modifier.fillMaxWidth().height(74.dp),
+        modifier = Modifier.fillMaxWidth().height(80.dp),
         shape = RoundedCornerShape(22.dp),
         border = BorderStroke(1.dp, LineGrey),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFAFD)),

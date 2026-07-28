@@ -1,8 +1,12 @@
 package com.zenonewrong.ui.screen.classify
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zenonewrong.R
 import com.zenonewrong.Screen
@@ -26,13 +30,19 @@ fun ClassifyScreenTopBar(
             else appViewModel.currentTab = Screen.Home.route
         }
     ) {
-        TopbarIconButton(
-            onClick = {
-                classifyVM.cleanState()
-                classifyVM.toggleDialog(true)
-            },
-            imageVector = Icons.Default.Add,
-            contentDescription = "添加分类"
-        )
+        Box(
+            modifier = Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            TopbarIconButton(
+                onClick = {
+                    classifyVM.cleanState()
+                    classifyVM.toggleDialog(true)
+                },
+                imageVector = Icons.Default.Add,
+                contentDescription = "添加分类"
+            )
+        }
+
     }
 }

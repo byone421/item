@@ -4,6 +4,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -28,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,19 +67,19 @@ fun MainScreen(navController: NavController) {
 //    val isMainTabRoute = currentDestination?.route in listOf("home", "search", "profile")
 
     Scaffold(
-        topBar = {
-            if (currentTab == Screen.Profile.route) {
-                Topbar(
-                    appViewModel = appViewModel,
-                    title = stringResource(Screen.Profile.resourceId),
-                    showBack = false
-                )
-            }
-        },
+//        topBar = {
+//            if (currentTab == Screen.Profile.route) {
+//                Topbar(
+//                    appViewModel = appViewModel,
+//                    title = stringResource(Screen.Profile.resourceId),
+//                    showBack = false
+//                )
+//            }
+//        },
         floatingActionButton = {
-            if (currentTab != Screen.Classify.route) {
+            if (currentTab == Screen.Home.route) {
                 FloatingActionButton(
-                    modifier = if (currentTab == Screen.Home.route) Modifier.size(62.dp) else Modifier,
+                    modifier = Modifier.size(62.dp),
                     contentColor = MaterialTheme.colorScheme.surface,
                     containerColor = MaterialTheme.colorScheme.primary,
                     onClick = {
@@ -136,7 +140,19 @@ fun MainScreen(navController: NavController) {
 
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        val layoutDirection = LocalLayoutDirection.current
+        val contentPadding = if (currentTab == Screen.Classify.route || currentTab == Screen.Profile.route ) {
+            PaddingValues(
+                start = innerPadding.calculateStartPadding(layoutDirection),
+                top = 0.dp,
+                end = innerPadding.calculateEndPadding(layoutDirection),
+                bottom = innerPadding.calculateBottomPadding()
+            )
+        } else {
+            innerPadding
+        }
+
+        Box(modifier = Modifier.padding(contentPadding)) {
             screenMap[currentTab]?.invoke()
         }
     }

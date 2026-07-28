@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zenonewrong.R
+import com.zenonewrong.ui.theme.BGGrey
 import com.zenonewrong.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,26 +49,31 @@ fun Topbar(
             ) {
                 Text(
                     text = title,
-                    fontSize = 23.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color(0xFF2D2930)
                 )
             }
         },
         modifier = Modifier
-            .height(68.dp)
+            .height(90.dp)
             .fillMaxWidth(),
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Transparent,
+            containerColor = BGGrey,
             titleContentColor = MaterialTheme.colorScheme.onSurface
         ),
         navigationIcon = {
             if (showBack) {
-                TopbarIconButton(
-                    onClick = onBack,
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    TopbarIconButton(
+                        onClick = onBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back)
+                    )
+                }
             }
         },
         actions = actions

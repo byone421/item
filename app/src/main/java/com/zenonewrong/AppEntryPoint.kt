@@ -86,7 +86,7 @@ fun AppEntryPoint() {
             val isCopy = backStackEntry.arguments?.getString("copy")?.toBoolean() ?: false
             AddItemScreen(id, isCopy)
         }
-        composable(Screen.Classify.route) { ClassifyScreen() }
+        composable(Screen.Classify.route) { ClassifyScreen(showBack = true) }
         composable(Screen.ExpiryDaysSetting.route) { ExpiryDaysSettingScreen() }
         composable("${Screen.Search.route}?title={title}&days={days}&classifyId={classifyId}") { backStackEntry ->
             val title = backStackEntry.arguments?.getString("title") ?: "搜索"

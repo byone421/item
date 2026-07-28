@@ -67,6 +67,7 @@ fun HomeScreen() {
     val itemToDelete by homeViewModel.itemToDelete.collectAsState()
     var query by remember { mutableStateOf("") }
     var selectedDays by remember { mutableStateOf<String?>(null) }
+    var sortOption by remember { mutableStateOf(RecordSortOption.CREATED_TIME) }
 
     LaunchedEffect(Unit) { homeViewModel.refreshStatusCards() }
 
@@ -85,6 +86,16 @@ fun HomeScreen() {
                     .lowercase(Locale.getDefault())
                     .contains(normalizedQuery)
             matchesClassify && matchesQuery && matchesExpiry(item, selectedDays)
+        }
+    }
+    val sortedItems = remember(filteredItems, sortOption) {
+        when (sortOption) {
+            RecordSortOption.CREATED_TIME -> filteredItems.sortedByDescending { it.id }
+            RecordSortOption.REMAINING_DAYS -> filteredItems.sortedWith(
+                compareBy<ItemInfo> {
+                    runCatching { LocalDate.parse(it.maturityDate) }.getOrDefault(LocalDate.MAX)
+                }.thenByDescending { it.id }
+            )
         }
     }
 
@@ -125,7 +136,7 @@ fun HomeScreen() {
             StatusOverviewGrid(
                 statusCards = statusCards,
                 selectedDays = selectedDays,
-                onCardClick = { selectedDays = it.days }
+                onCardClick = { selectedDays = it.days.takeUnless { days -> days == selectedDays } }
             )
         }
         item {
@@ -133,6 +144,8 @@ fun HomeScreen() {
                 recordCount = filteredItems.size,
                 totalCount = itemInfos.size,
                 selectedClassifyName = appViewModel.selectedHomeClassifyName,
+                sortOption = sortOption,
+                onSortOptionSelected = { sortOption = it },
                 onClearFilters = {
                     query = ""
                     selectedDays = null
@@ -155,8 +168,8 @@ fun HomeScreen() {
                 )
             }
         }
-        items(count = filteredItems.size, key = { filteredItems[it].id }) { index ->
-            val item = filteredItems[index]
+        items(count = sortedItems.size, key = { sortedItems[it].id }) { index ->
+            val item = sortedItems[index]
             SwipeableItemContainer(
                 itemInfo = item,
                 onDelete = homeViewModel::showDeleteConfirmDialog,

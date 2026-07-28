@@ -35,7 +35,6 @@ interface ExpiryReminderDao {
     @Query("SELECT COUNT(*) FROM item_info WHERE maturity_date < date('now')")
     suspend fun getExpiredItemCount(): Int
 
-
     @Query(
         """
         SELECT COUNT(*) 
@@ -55,14 +54,26 @@ interface ExpiryReminderDao {
     @Query("SELECT COUNT(*) FROM item_info WHERE maturity_date > date('now', '+7 days') AND maturity_date <= date('now', '+10 days')")
     suspend fun getExpiringIn10DaysItemCount(): Int
 
-
-    @Query("""
-            SELECT COUNT(*) 
-            FROM item_info 
-            WHERE maturity_date >= date('now') 
-              AND maturity_date <= date('now', '+' || :days || ' days')
-        """)
+    @Query(
+        """
+        SELECT COUNT(*)
+        FROM item_info
+        WHERE maturity_date >= date('now')
+          AND maturity_date <= date('now', '+' || :days || ' days')
+        """
+    )
     suspend fun countItemsDueInDays(days: Int): Int
+
+
+    @Query(
+        """
+        SELECT COUNT(*)
+        FROM item_info
+        WHERE maturity_date >= date('now', 'localtime', '+' || :startDays || ' days')
+          AND maturity_date < date('now', 'localtime', '+' || :endDays || ' days')
+        """
+    )
+    suspend fun countItemsDueBetween(startDays: Int, endDays: Int): Int
 
     @Query(
         """
@@ -72,4 +83,7 @@ interface ExpiryReminderDao {
         """
     )
     suspend fun getExpiringDaysByTag(tag: String): Int
+
+    @Query("SELECT * FROM expiry_reminder")
+    suspend fun getExpiryReminders(): List<ExpiryReminder>
 }
