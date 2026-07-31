@@ -17,11 +17,12 @@ fun AddItemScreenTopBar(appViewModel: AppViewModel, itemInfoVM: ItemInfoViewMode
             itemInfoVM.clearForm()
             appViewModel.navigateBack()
         }
-    ) {
-        TopbarIconButton(
-            onClick = {},
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "更多"
-        )
-    }
+    )
+//    {
+//        TopbarIconButton(
+//            onClick = {},
+//            imageVector = Icons.Default.MoreVert,
+//            contentDescription = "更多"
+//        )
+//    }
 }

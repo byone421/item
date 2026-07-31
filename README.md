@@ -7,7 +7,7 @@
 - 📝 物品信息记录（名称、过期时间、分类等）
 - 📷 支持拍照或从相册添加物品图片，单个物品最多 5 张
 - 🏷️ 自定义分类管理
-- ⏰ 过期时间自动追踪和提醒
+- ⏰ 过期时间自动追踪和状态统计
 - 🔍 快速搜索和筛选功能
 - 📊 物品状态概览
 - 📦 支持 CSV 数据导入导出，导出物品时会同步导出图片文件
@@ -40,7 +40,12 @@
 - 图片会恢复到应用内部的 `item/images` 目录中。
 
 ## 应用截图
-![1.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761379915132-f505fcd7-d6fd-41d9-b89f-da75b428ce9b.png?x-oss-process=image%2Fformat%2Cwebp) ![2.jpg](https://cdn.nlark.com/yuque/0/2025/png/12600036/1761379930940-95114629-5420-4e0c-ba5a-52940a9f9c6d.png?x-oss-process=image%2Fformat%2Cwebp)
+
+
+<img src="./doc/0.png" width="300" height="600" alt="物品记首页">
+<img src="./doc/1.png" width="300" height="600" alt="记录物品页面">
+
+
 ## 许可证
 
 本项目采用 MIT 许可证。

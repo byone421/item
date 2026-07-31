@@ -8,7 +8,6 @@ class ItemInfoApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ExpiryNotificationScheduler.createNotificationChannel(this)
-        ExpiryNotificationScheduler.restore(this)
+        ExpiryNotificationScheduler.disableAll(this)
     }
 }

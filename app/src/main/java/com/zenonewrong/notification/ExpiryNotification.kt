@@ -61,6 +61,18 @@ object ExpiryNotificationScheduler {
         if (hasEnabledReminder(context)) schedule(context, ExistingPeriodicWorkPolicy.KEEP)
     }
 
+    fun disableAll(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .apply {
+                putBoolean(ENABLED_KEY, false)
+                reminderTags.forEach { putBoolean(enabledKey(it), false) }
+            }
+            .apply()
+        WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+    }
+
     fun enabledTags(context: Context): Set<String> =
         reminderTags.filterTo(mutableSetOf()) { isEnabled(context, it) }
 
